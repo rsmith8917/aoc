@@ -2,12 +2,15 @@
 
 ## How to start a new day
 
-Get token from webpage request Cookie and store in .token file in year directory:
-Example:
+Get token from webpage request Cookie and store in .token file in year directory
+
+Example .token file:
 
 ```
-p8qq54nw91o80qodtkvs4v0yd8pi89o06cshv2h64n8zismk9x2hap9tdbejq4w0rqvp7624eqqbk04ymr0bsmo7v92ync12eg20ypg3896ow0wp74q2bn2nkr1tk0wp
+osoyeq4ijfws3iifcorwi839zxeie5yz62dncbtj7mi8qbrihg7jj4jrqn7b6ob5
 ```
+
+Run input script:
 
 ```
 ./input.sh <day_number>
