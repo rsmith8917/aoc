@@ -11,6 +11,8 @@ const start = Date.now();
 
 // Get points on original path
 const { guard, obstacles } = findItems(map);
+const origGuard = structuredClone(guard);
+const origObstacles = structuredClone(obstacles);
 let guardAtEdge = false;
 const guardPositions = new Set<string>();
 guardPositions.add(`${guard.row}:${guard.col}`);
@@ -26,8 +28,14 @@ while (!guardAtEdge) {
 // and check if there are cycles using fast and slow pointer method
 let current = 0;
 let cycleCount = 0;
+
 for (const guardPosition of guardPositions) {
-  const { guard, obstacles } = findItems(map);
+  guard.row = origGuard.row;
+  guard.col = origGuard.col;
+  guard.direction = origGuard.direction;
+  if (obstacles.length > origObstacles.length) {
+    obstacles.pop();
+  }
   const parts = guardPosition.split(":").map((p) => parseInt(p));
   const newObstacle = { row: parts[0], col: parts[1] };
   if (!(guard.row === newObstacle.row && guard.col === newObstacle.col)) {
