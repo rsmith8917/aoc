@@ -7,26 +7,32 @@ const rows = fileData.split("\n").filter((r) => !!r);
 const map = rows.map((r) => r.split(""));
 
 // Main
+const start = Date.now();
+
 const { guard, obstacles } = findItems(map);
 let guardAtEdge = false;
-const guardPositions = new Set();
+const guardPositions = new Set<string>();
 guardPositions.add(`${guard.row}:${guard.col}`);
 
 while (!guardAtEdge) {
-  const nextCell = getNextCell(guard);
-  if (isObstacle(nextCell, obstacles)) {
-    turnGuard(guard);
-  } else {
-    moveGuard(guard);
-  }
+  moveGuard(guard, obstacles);
 
   guardAtEdge = isGuardAtEdge(guard, map);
   guardPositions.add(`${guard.row}:${guard.col}`);
 }
 
+console.log("Elaped time (sec) = ", (Date.now() - start) / 1000);
 console.log("Count = ", guardPositions.size);
 
 // Functions
+function moveGuard(guard: Guard, obstacles: Set<string>) {
+  const nextCell = getNextCell(guard);
+  if (isObstacle(nextCell, obstacles)) {
+    turnGuard(guard);
+  } else {
+    stepGuard(guard);
+  }
+}
 function isGuardAtEdge(guard: Guard, map: string[][]) {
   if (guard.direction === "^") {
     return guard.row === 0;
@@ -44,7 +50,7 @@ function isGuardAtEdge(guard: Guard, map: string[][]) {
   return false;
 }
 
-function moveGuard(guard: Guard) {
+function stepGuard(guard: Guard) {
   if (guard.direction === "^") {
     guard.row = guard.row - 1;
     return;
@@ -84,7 +90,7 @@ function turnGuard(guard: Guard) {
 
 function findItems(map: string[][]) {
   const guard: Guard = { row: 0, col: 0, direction: "^" };
-  const obstacles = [];
+  const obstacles = new Set<string>();
 
   for (let i = 0; i < map.length; i++) {
     const row = rows[i];
@@ -97,7 +103,7 @@ function findItems(map: string[][]) {
       }
 
       if (cell === "#") {
-        obstacles.push({ row: i, col: j });
+        obstacles.add(i + ":" + j);
       }
     }
   }
@@ -108,14 +114,8 @@ function isGuard(cell: string) {
   return cell === "^" || cell === ">" || cell === "<" || cell === "v";
 }
 
-function isObstacle(
-  pos: { row: number; col: number },
-  obstacles: { row: number; col: number }[],
-) {
-  for (const obstacle of obstacles) {
-    if (obstacle.row === pos.row && obstacle.col === pos.col) return true;
-  }
-  return false;
+function isObstacle(pos: { row: number; col: number }, obstacles: Set<string>) {
+  return obstacles.has(pos.row + ":" + pos.col);
 }
 
 function getNextCell(guard: Guard) {
