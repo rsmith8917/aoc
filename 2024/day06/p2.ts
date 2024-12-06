@@ -7,40 +7,46 @@ const rows = fileData.split("\n").filter((r) => !!r);
 const map = rows.map((r) => r.split(""));
 
 // Main
-const total = map.length * map[0].length;
+const start = Date.now();
+const { guard, obstacles } = findItems(map);
+let guardAtEdge = false;
+const guardPositions = new Set<string>();
+guardPositions.add(`${guard.row}:${guard.col}`);
+
+while (!guardAtEdge) {
+  moveGuard(guard, obstacles);
+
+  guardAtEdge = isGuardAtEdge(guard, map);
+  guardPositions.add(`${guard.row}:${guard.col}`);
+}
 let current = 0;
 let cycleCount = 0;
-for (let i = 0; i < map.length; i++) {
-  for (let j = 0; j < map.length; j++) {
-    console.log((current / total) * 100);
-    const { guard, obstacles } = findItems(map);
-    const newObstacle = { row: i, col: j };
-    if (
-      !isObstacle(newObstacle, obstacles) &&
-      !(guard.row === newObstacle.row && guard.col === newObstacle.col)
-    ) {
-      obstacles.push(newObstacle);
-      const slowGuard = structuredClone(guard);
-      let guardAtEdge = false;
-      let cycleDetected = false;
-      let step = 0;
-      while (!guardAtEdge && !cycleDetected) {
-        moveGuard(guard, obstacles);
-        if (step % 2 === 1) {
-          moveGuard(slowGuard, obstacles);
-        }
-        step = step + 1;
-        guardAtEdge = isGuardAtEdge(guard, map);
-        cycleDetected = guardsMatch(guard, slowGuard);
+for (const guardPosition of guardPositions) {
+  const { guard, obstacles } = findItems(map);
+  const parts = guardPosition.split(":").map((p) => parseInt(p));
+  const newObstacle = { row: parts[0], col: parts[1] };
+  if (!(guard.row === newObstacle.row && guard.col === newObstacle.col)) {
+    obstacles.push(newObstacle);
+    const slowGuard = structuredClone(guard);
+    let guardAtEdge = false;
+    let cycleDetected = false;
+    let step = 0;
+    while (!guardAtEdge && !cycleDetected) {
+      moveGuard(guard, obstacles);
+      if (step % 2 === 1) {
+        moveGuard(slowGuard, obstacles);
       }
-      if (cycleDetected) {
-        cycleCount = cycleCount + 1;
-      }
+      step = step + 1;
+      guardAtEdge = isGuardAtEdge(guard, map);
+      cycleDetected = guardsMatch(guard, slowGuard);
     }
-    current = current + 1;
+    if (cycleDetected) {
+      cycleCount = cycleCount + 1;
+    }
   }
+  current = current + 1;
 }
-
+console.log("Elaped time (sec) = ", (Date.now() - start) / 1000);
 console.log("Count = ", cycleCount);
 
 // Functions
