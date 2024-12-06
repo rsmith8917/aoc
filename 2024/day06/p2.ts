@@ -8,6 +8,8 @@ const map = rows.map((r) => r.split(""));
 
 // Main
 const start = Date.now();
+
+// Get points on original path
 const { guard, obstacles } = findItems(map);
 let guardAtEdge = false;
 const guardPositions = new Set<string>();
@@ -19,6 +21,9 @@ while (!guardAtEdge) {
   guardAtEdge = isGuardAtEdge(guard, map);
   guardPositions.add(`${guard.row}:${guard.col}`);
 }
+
+// Add an obstacle at each point on original path
+// and check if there are cycles using fast and slow pointer method
 let current = 0;
 let cycleCount = 0;
 for (const guardPosition of guardPositions) {
