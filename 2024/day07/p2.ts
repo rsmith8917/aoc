@@ -33,7 +33,9 @@ function foo(
   } else {
     const num1 = start + numbers[index];
     const num2 = start * numbers[index];
+    const num3 = parseInt(`${start}${numbers[index]}`);
     foo(index + 1, num1, numbers, results);
     foo(index + 1, num2, numbers, results);
+    foo(index + 1, num3, numbers, results);
   }
 }
