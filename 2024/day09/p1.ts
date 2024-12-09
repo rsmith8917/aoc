@@ -7,8 +7,6 @@ const numbers = fileData
   .map((n) => parseInt(n))
   .filter((n) => !isNaN(n));
 
-console.log(numbers);
-
 const disk = [];
 let id = 0;
 for (let i = 0; i < numbers.length; i++) {
@@ -38,8 +36,6 @@ while (end > start) {
   }
 }
 
-console.log(disk.join(""));
-
 let checksum = 0;
 
 for (let i = 0; i < disk.length; i++) {
@@ -49,4 +45,4 @@ for (let i = 0; i < disk.length; i++) {
   }
 }
 
-console.log(checksum);
+console.log("Checksum =", checksum);
