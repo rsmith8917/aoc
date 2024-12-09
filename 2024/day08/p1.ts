@@ -1,6 +1,6 @@
 import fs from "node:fs";
 
-const fileData = fs.readFileSync("./test_input", "utf8");
+const fileData = fs.readFileSync("./input", "utf8");
 const lines = fileData.split("\n").filter((l) => !!l);
 type Antenna = {
   row: number;
@@ -9,10 +9,10 @@ type Antenna = {
 };
 const antennas: Antenna[] = [];
 const frequencies = new Set<string>();
-let totalRows = 0;
+let totalCols = 0;
 for (let row = 0; row < lines.length; row++) {
   const line = lines[row].split("");
-  totalRows = line.length;
+  totalCols = line.length;
   for (let col = 0; col < line.length; col++) {
     const cell = line[col];
     if (cell !== ".") {
@@ -21,11 +21,10 @@ for (let row = 0; row < lines.length; row++) {
     }
   }
 }
-console.log(totalRows);
-const antinodes = new Set<{ row: number; col: number }>();
+
+const antinodes = new Set<string>();
 for (const frequency of frequencies) {
   const matchingAntennas = antennas.filter((a) => a.freq === frequency);
-
   for (let i = 0; i < matchingAntennas.length; i++) {
     for (let j = 0; j < matchingAntennas.length; j++) {
       if (i !== j) {
@@ -37,19 +36,15 @@ for (const frequency of frequencies) {
         };
 
         if (
-          antinode.row < totalRows - 1 &&
+          antinode.row < lines.length &&
           antinode.row >= 0 &&
           antinode.col >= 0 &&
-          antinode.col < lines.length - 1 &&
-          !antennas.some(
-            (a) => a.row === antinode.row && a.col === antinode.col,
-          )
+          antinode.col < totalCols
         ) {
-          antinodes.add(antinode);
+          antinodes.add(`${antinode.row}:${antinode.col}`);
         }
       }
     }
   }
 }
-console.log(antinodes);
 console.log("Count = ", antinodes.size);
